@@ -1,0 +1,161 @@
+# Milestone 1 - Data Preparation & Feature Engineering Report
+
+**Team:** Ravenclaw | **Date:** February 2026 |
+
+---
+
+## Executive Summary
+
+Complete data preparation for FinMark customer segmentation with **all mentor feedback incorporated**. Successfully engineered 27 features across 993 customers, ready for clustering analysis.
+
+---
+
+## Latest Feedback - All Addressed ✅
+
+### NEW Feedback
+- ✅ **Income Level**: Derived from **Total_Spending** using **quartiles** (Q1, Q3)
+- ✅ **Winsorization**: Applied to Satisfaction_Score (5% limits on each tail)
+- ✅ **Feedback_Comments**: Excluded from customer-level features (redundancy removed)
+
+### Previous Feedback
+- ✅ Merged transaction and customer data **FIRST** (before cleaning)
+- ✅ Used **transaction amount** as reference for transaction-level income groups
+- ✅ Created **consolidated CSV** of cleaned data
+
+---
+
+## Data Cleaning Results
+
+| Metric | Value |
+|--------|-------|
+| Original merged records | 25,623 |
+| Cleaned records | 5,000 |
+| Duplicates removed | 20,623 |
+| Missing values | 0 (imputed with median) |
+| Outliers handled | Yes (IQR method + **winsorization**) |
+| Unique customers | 993 |
+
+---
+
+## Income Group Derivation
+
+### Transaction-Level (Reference)
+**Method**: Quartile-based on Transaction_Amount
+
+| Group | Boundary | Count | Percentage |
+|-------|----------|-------|------------|
+| Low | ≤ $1,260 (Q1) | 1,251 | 25% |
+| Medium | $1,260 - $3,682 (Q1-Q3) | 2,501 | 50% |
+| High | > $3,682 (Q3) | 1,248 | 25% |
+
+### Customer-Level Primary_Income_Group
+**Method**: Quartile-based on **Total_Spending** (aggregated customer spending)
+
+| Group | Boundary | Customers | Percentage | Avg Spending |
+|-------|----------|-----------|------------|--------------|
+| Low | ≤ $7,777 (Q1) | ~248 | ~25% | ~$5,500 |
+| Medium | $7,777 - $16,531 (Q1-Q3) | ~497 | ~50% | ~$12,000 |
+| High | > $16,531 (Q3) | ~248 | ~25% | ~$21,000 |
+
+Based on total customer behavior (not individual transactions), more representative of income capacity.
+
+---
+
+## Features Engineered (27 total)
+
+### Spending Features (6)
+- Total_Spending: Sum of all transactions
+- Avg_Transaction_Amount: Mean transaction value
+- Max_Transaction: Highest single transaction
+- Min_Transaction: Lowest single transaction
+- Std_Transaction_Amount: Variability in spending
+- Median_Transaction: Median transaction value
+
+### Engagement Features (1)
+- Transaction_Count: Number of transactions per customer
+
+### Satisfaction Features (4) - Winsorized
+- Avg_Satisfaction: Mean satisfaction score (from winsorized scores)
+- Std_Satisfaction: Consistency of satisfaction
+- Min_Satisfaction: Lowest satisfaction
+- Max_Satisfaction: Highest satisfaction
+
+### Recommendation Features (3)
+- Avg_Likelihood_to_Recommend: Mean recommendation score
+- Min_Likelihood: Lowest likelihood
+- Max_Likelihood: Highest likelihood
+
+### Sentiment Features (2)
+- Avg_Feedback_Sentiment: Mean feedback sentiment (1-5 scale)
+- Std_Feedback_Sentiment: Sentiment consistency
+
+### Temporal Behavior Features (6)
+- Pct_Business_Hours: % transactions during 9AM-5PM
+- Pct_Weekend_Transactions: % transactions on weekends
+- Pct_Morning_Transactions: % transactions 6AM-12PM
+- Pct_Evening_Transactions: % transactions 6PM-12AM
+- Avg_Hour_of_Day: Average transaction hour
+- Std_Hour_of_Day: Variability in transaction timing
+
+### Transaction Type Distribution (4)
+- Count_Purchase: Number of purchase transactions
+- Count_Bill Payment: Number of bill payment transactions
+- Count_Investment: Number of investment transactions
+- Count_Loan Payment: Number of loan payment transactions
+
+### Income Group (1) 
+- Primary_Income_Group: Low/Medium/High classification (quartile-based from Total_Spending)
+
+---
+
+## Key Insights
+
+1. **Spending Diversity**: High variation in customer spending ($286-$37,281) indicates excellent potential for segmentation
+
+2. **Income-Spending Correlation**: Clear differentiation between income groups (~$5,500 vs ~$12,000 vs ~$21,000) validates quartile approach
+
+3. **Satisfaction Variation**: Moderate satisfaction (5.53/10) with low correlation to spending suggests distinct experience segments
+
+4. **Temporal Patterns**: Only 33% transactions during business hours → need for 24/7 customer service
+
+5. **Engagement Range**: Transaction count varies from 1-13, indicating diverse engagement levels
+
+6. **Product Usage**: Balanced transaction types (~1.25 avg per customer) suggests good diversification
+
+---
+
+## Quality Assessment
+
+| Metric | Status |
+|--------|--------|
+| Data completeness | 99.6% |
+| Missing values | 116 (0.43%) - only in std features |
+| Duplicate customers | 0 |
+| Feature validation | All ranges valid |
+| Income distribution | Balanced 25%-50%-25% |
+| Winsorization applied | Yes (5% limits) |
+
+---
+
+## Files Generated
+
+- **FinMark_Transaction_Data_Cleaned.csv** (5,000 records)
+  - Transaction-level data with winsorized Satisfaction_Score
+
+- **FinMark_Customer_Features_Engineered.csv** (993 customers)
+  - Customer-level features with Primary_Income_Group for clustering
+
+- **FinMark_Milestone1_Updated.ipynb**
+  - Complete analysis workflow with all feedback implemented
+
+---
+
+## Expected Customer Segments (Milestone 2)
+
+1. **High-Value Loyal**: High spending, high transactions, high satisfaction, high income
+2. **Price-Sensitive**: Low avg transaction, low income, moderate satisfaction, bill payment focus
+3. **Investment-Focused**: High investment count, medium-high income, business hours
+4. **Occasional High-Spenders**: Low frequency, high max transaction, weekend/evening
+5. **At-Risk**: Low satisfaction, needs retention strategies
+
+---
